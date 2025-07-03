@@ -4,3 +4,4 @@ pyzbar
 numpy
 opencv-python
 opencv-contrib-python
+libgl1
