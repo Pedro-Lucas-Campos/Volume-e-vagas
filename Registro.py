@@ -3,6 +3,9 @@ import cv2
 from pyzbar import pyzbar
 import numpy as np
 import pandas as pd
+import requests
+
+API_ENDPOINT = "https://api-final-njr2.onrender.com/add_record"
 
 def processar_qr_code(camera_key, step_message, process_function=None):
     st.info(step_message)
@@ -55,7 +58,16 @@ elif st.session_state.step == "loc":
     st.success(f"✅ VIN Lido: **{st.session_state.vin}**")
     loc_lida = processar_qr_code("camera_loc", "Passo 2: Agora, leia o QR Code da LOCALIZAÇÃO.")
     if loc_lida:
-        st.session_state.records.append({"VIN": st.session_state.vin, "Localização": loc_lida})
+        record = {"VIN": st.session_state.vin, "Localização": loc_lida}
+        try:
+            response = requests.post(API_ENDPOINT, json=record)
+            response.raise_for_status()
+            st.success(f"Registro enviado com sucesso para a base de dados!")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Falha ao comunicar com a API: {e}")
+            st.warning("O registro foi salvo apenas nesta sessão. Verifique se a API está online.")
+        st.session_state.records.append(record)
+
         st.session_state.step = "vin"
         st.session_state.vin = None
         st.rerun()
@@ -65,5 +77,6 @@ st.header("Registros Coletados")
 if st.session_state.records:
     df = pd.DataFrame(st.session_state.records)
     st.dataframe(df, use_container_width=True)
+
 else:
     st.warning("Nenhum registro coletado ainda.")
