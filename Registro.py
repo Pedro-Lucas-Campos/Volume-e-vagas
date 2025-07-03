@@ -34,13 +34,33 @@ st.set_page_config(page_title="Cadastro de volume",layout='wide')
 st.title("Leia o QR CODE")
 st.write("Aponte a câmera para o QR CODE")
 
-img_file_buffer = st.camera_input("Tire a foto do QR CODE")
+img_file_buffer_vin = st.camera_input("Tire a foto do QR CODE")
 
-if img_file_buffer is not None:
-    bytes_data = img_file_buffer.getvalue()
+if img_file_buffer_vin is not None:
+    bytes_data = img_file_buffer_vin.getvalue()
     cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
     st.info("ANALISANDO O QR CODE")
     texto_extraido = ler_qr_code(cv2_img)
     
     if texto_extraido:
-        st.success(f"O VIN {texto_extraido[1]} foi extraido")
+        try:
+            qr_data = texto_extraido[0].data.decode("utf-8")
+            vin_parcial = qr_data[41:58]
+        except Exception as e:
+            st.error(f"Erro ao extrair VIN: {e}")
+
+
+img_file_buffer_loc = st.camera_input("Tire a foto do QR CODE")
+
+if img_file_buffer_vin is not None:
+    bytes_data = img_file_buffer_vin.getvalue()
+    cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+    st.info("ANALISANDO O QR CODE")
+    texto_extraido = ler_qr_code(cv2_img)
+    
+    if texto_extraido:
+        try:
+            qr_data = texto_extraido[0].data.decode("utf-8")
+            vin_parcial = qr_data[41:58]
+        except Exception as e:
+            st.error(f"Erro ao extrair VIN: {e}")
