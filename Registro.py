@@ -45,7 +45,7 @@ if "records" not in st.session_state:
 
 if st.session_state.step == "vin":
     vin_processor = lambda data: data[41:58] if len(data) >= 58 else data
-    vin_lido = processar_qr_code("camera_vin", "➡️ Passo 1: Leia o QR Code do VEÍCULO.", vin_processor)
+    vin_lido = processar_qr_code("camera_vin", "Passo 1: Leia o QR Code do VEÍCULO.", vin_processor)
     if vin_lido:
         st.session_state.vin = vin_lido
         st.session_state.step = "loc"
@@ -53,7 +53,7 @@ if st.session_state.step == "vin":
 
 elif st.session_state.step == "loc":
     st.success(f"✅ VIN Lido: **{st.session_state.vin}**")
-    loc_lida = processar_qr_code("camera_loc", "➡️ Passo 2: Agora, leia o QR Code da LOCALIZAÇÃO.")
+    loc_lida = processar_qr_code("camera_loc", "Passo 2: Agora, leia o QR Code da LOCALIZAÇÃO.")
     if loc_lida:
         st.session_state.records.append({"VIN": st.session_state.vin, "Localização": loc_lida})
         st.session_state.step = "vin"
