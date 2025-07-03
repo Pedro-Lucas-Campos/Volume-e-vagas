@@ -43,4 +43,4 @@ if img_file_buffer is not None:
     texto_extraido = ler_qr_code(cv2_img)
     
     if texto_extraido:
-        st.success(f"O VIN {texto_extraido} foi extraido")
+        st.success(f"O VIN {texto_extraido[0]} foi extraido")
