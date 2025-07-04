@@ -56,9 +56,15 @@ if st.session_state.step == "vin":
 
 elif st.session_state.step == "loc":
     st.success(f"VIN Lido: **{st.session_state.vin}**")
+    tipo_reparo = st.radio(
+        "Selecione o tipo de falha:",
+        ("Elétrica", "Mecânica"),
+        horizontal=True,
+        key='tipo_reparo_choice'
+    )
     loc_lida = processar_qr_code("camera_loc", "Agora, leia o QR Code da LOCALIZAÇÃO.")
     if loc_lida:
-        record = {"VIN": st.session_state.vin, "Localização": loc_lida}
+        record = {"VIN": st.session_state.vin, "Localização": loc_lida, "Tipo":tipo_reparo}
         try:
             response = requests.post(API_ENDPOINT, json=record)
             response.raise_for_status()
@@ -76,6 +82,8 @@ st.markdown("---")
 st.header("Registros Coletados")
 if st.session_state.records:
     df = pd.DataFrame(st.session_state.records)
+    if "Tipo" in df.columns:
+        df = df[['VIN', "Tipo", "Localização"]]
     st.dataframe(df, use_container_width=True)
 
 else:
